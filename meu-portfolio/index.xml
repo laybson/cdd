@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Hugo tranquilpeak theme</title>
+    <link>/</link>
+    <description>Recent content on Hugo tranquilpeak theme</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    
+	<atom:link href="/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title></title>
+      <link>/1/01/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/1/01/</guid>
+      <description>EDA de dados de seriados no IMDB Análise exploratória de dados do IMDB sobre seriados de TV e Streaming. Os dados originais e as variáveis vem de https://github.com/nazareno/imdb-series. Lá tem a explicação de como os dados foram gerados e do significado de cada variável.
+Nosso objetivo aqui é se divertir vendo o que o público achou dos episódios, temporadas e séries que gostamos, e compará-las.</description>
+    </item>
+    
+    <item>
+      <title></title>
+      <link>/1/01/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/1/01/</guid>
+      <description>QUANTIDADE X QUALIDADE            code{white-space: pre;} pre:not([class]) { background-color: white; }  if (window.hljs) { hljs.configure({languages: []}); hljs.initHighlightingOnLoad(); if (document.readyState &amp;&amp; document.readyState === &#34;complete&#34;) { window.setTimeout(function() { hljs.initHighlighting(); }, 0); } }  h1 { font-size: 34px; } h1.title { font-size: 38px; } h2 { font-size: 30px; } h3 { font-size: 24px; } h4 { font-size: 18px; } h5 { font-size: 16px; } h6 { font-size: 12px; } .</description>
+    </item>
+    
+    <item>
+      <title></title>
+      <link>/1/01/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/1/01/</guid>
+      <description>EDA IMDB SERIES LAYBSON            code{white-space: pre;} pre:not([class]) { background-color: white; }  if (window.hljs) { hljs.configure({languages: []}); hljs.initHighlightingOnLoad(); if (document.readyState &amp;&amp; document.readyState === &#34;complete&#34;) { window.setTimeout(function() { hljs.initHighlighting(); }, 0); } }  h1 { font-size: 34px; } h1.title { font-size: 38px; } h2 { font-size: 30px; } h3 { font-size: 24px; } h4 { font-size: 18px; } h5 { font-size: 16px; } h6 { font-size: 12px; } .</description>
+    </item>
+    
+    <item>
+      <title>EDA IMDB SERIES LAYBSON</title>
+      <link>/1/01/eda-imdb-series-laybson/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/1/01/eda-imdb-series-laybson/</guid>
+      <description>episodes = read_csv(&amp;quot;data/series_from_imdb.csv&amp;quot;) %&amp;gt;% filter(series_name %in% c(&amp;quot;Roma&amp;quot;, &amp;quot;Vikings&amp;quot;, &amp;quot;Band of Brothers&amp;quot;)) ## Parsed with column specification: ## cols( ## series_name = col_character(), ## Episode = col_character(), ## series_ep = col_integer(), ## season = col_integer(), ## season_ep = col_integer(), ## url = col_character(), ## UserRating = col_double(), ## UserVotes = col_double(), ## r1 = col_double(), ## r2 = col_double(), ## r3 = col_double(), ## r4 = col_double(), ## r5 = col_double(), ## r6 = col_double(), ## r7 = col_double(), ## r8 = col_double(), ## r9 = col_double(), ## r10 = col_double() ## ) Séries históricas Séries precisam contar histórias.</description>
+    </item>
+    
+    <item>
+      <title>QUANTIDADE X QUALIDADE</title>
+      <link>/1/01/quantidade-x-qualidade/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/1/01/quantidade-x-qualidade/</guid>
+      <description>episodes = read_csv(&amp;quot;../data/series_from_imdb.csv&amp;quot;) ## Parsed with column specification: ## cols( ## series_name = col_character(), ## Episode = col_character(), ## series_ep = col_integer(), ## season = col_integer(), ## season_ep = col_integer(), ## url = col_character(), ## UserRating = col_double(), ## UserVotes = col_double(), ## r1 = col_double(), ## r2 = col_double(), ## r3 = col_double(), ## r4 = col_double(), ## r5 = col_double(), ## r6 = col_double(), ## r7 = col_double(), ## r8 = col_double(), ## r9 = col_double(), ## r10 = col_double() ## ) mtas_temporadas = episodes %&amp;gt;% group_by(series_name) %&amp;gt;% filter(season %in% c(8)) doze_temporadas = episodes %&amp;gt;% group_by(series_name) %&amp;gt;% filter(season %in% c(12)) series_mtas_temporadas = episodes %&amp;gt;% filter(series_name %in% c(mtas_temporadas$series_name)) series_doze_temporadas = episodes %&amp;gt;% filter(series_name %in% c(doze_temporadas$series_name)) Quantidade vs.</description>
+    </item>
+    
+  </channel>
+</rss>

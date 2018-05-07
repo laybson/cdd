@@ -1,0 +1,165 @@
+---
+title: "QUANTIDADE X QUALIDADE"
+output:  
+  html_notebook:
+    toc: yes
+    toc_float: yes
+  html_document:
+    df_print: paged
+    toc: yes
+    toc_float: yes
+data: 2018-05-06
+---
+
+```{r setup, echo=FALSE, warning=FALSE, message=FALSE}
+library(tidyverse)
+library(here)
+library(gtools)
+theme_set(theme_bw())
+```
+
+```{r}
+episodes = read_csv("../data/series_from_imdb.csv")
+```
+```{r}
+mtas_temporadas = episodes %>%
+  group_by(series_name) %>%
+    filter(season %in% c(8))
+```
+
+```{r}
+doze_temporadas = episodes %>%
+  group_by(series_name) %>%
+    filter(season %in% c(12))
+```
+
+```{r}
+series_mtas_temporadas = episodes %>%
+    filter(series_name %in% c(mtas_temporadas$series_name))
+```
+
+```{r}
+series_doze_temporadas = episodes %>%
+    filter(series_name %in% c(doze_temporadas$series_name))
+```
+
+## Quantidade vs. Qualidade
+
+É saber popular que qualidade e quantidade geralmente são coisas não relacionadas, ou relacionadas inversamente. Quando séries são bem sucedidas em audiência e retorno financeiro, muitas vezes se extendem para muitas temporadas. Os investidores tendem a espremer o máximo que uma fonte de renda eficiente tem a dar. Iremos aqui avaliar se estas séries conseguem manter sua qualidade ao longo das intermináveis temporadas.
+
+Ainda seguindo o relacionamento qualidade/quantidade, vamos ver se o número de episódios por temporada de uma série tem influência sobre a qualidade vista pelos seus espectadores.
+
+Para respondermos estas perguntas iremos utilizar dados advindos do IMDB.
+
+
+
+### Séries que se extendem para muitas temporadas conseguem manter sua qualidade?
+
+Para esta avaliação utilizaremos dados sobre as séries que possuem ao menos 8 temporadas. * temporadas significam ao menos 8 anos de produção, o que já é um tempo enorme. Tempo suficiente para um ator pré-adolescente contido na trama se transformar em um adulto.
+
+```{r}
+series_mtas_temporadas$season <- factor(series_mtas_temporadas$season)
+series_mtas_temporadas %>%
+    group_by(season) %>% 
+    summarise(media = mean(UserRating)) %>% 
+    ggplot(aes(x = season, y = media, label = sprintf("%0.2f", round(media, digits = 2)))) + 
+    geom_col() +
+    geom_text(vjust=2, colour = "white", size = 1.5) +
+    labs(x = "Temporada", y = "Avaliação média no IMDB")
+```
+
+Observando apenas as médias das notas por temporadas, vemos que as notas caem progressivamente a partir da 7ª temporada até a 12ª. Após isso não dá para perceber um padrão definido.
+
+#### Por quê a avaliação da 31ª temporada das séries é tão alta?
+```{r}
+temp31 = series_mtas_temporadas %>%
+    filter(as.numeric(season) %in% c(31))
+```
+A única série no nosso conjunto de dados que possui tantas temporadas é a série Survivor, que é um Reality Show de sobrevivência que teve um de seus pontos altos de cŕitica e público em sua 31ª temporada.
+
+Seus 14 episódios nesta temporada tiveram as seguintes avaliações:
+
+```{r}
+temp31 %>%
+  ggplot(aes(x = factor(season_ep), y = UserRating, label = sprintf("%0.2f", round(UserRating, digits = 2)))) + 
+  geom_col() +
+  geom_text(vjust=2, colour = "white", size = 3) +
+  labs(x = "Episódios da 31ª temporada de Survivor", y = "Avaliação média no IMDB")
+```
+
+
+
+
+#### Mas realmente há relação entre a quantidade de temporadas e a qualidade das séries?
+```{r}
+series_mtas_temporadas %>%
+  ggplot(aes(x = as.numeric(season))) +
+  geom_histogram(binwidth = 0.5, aes(fill = ..count..)) +
+  labs(x = "Temporada", y = "Número de avaliações")
+```
+
+O histograma acima nos diz a quantidade de avaliações por tempporada. O que nos mostra que pouquíssimas séries possuem mais de 15 temporadas (com mais de 30, por exemplo, só temos Survivor). Isso nos faz crer que esses dados não são muito representativos para o todo, logo, iremos avaliar a correlação considerando apenas as 15 primeiras temporadas.
+
+```{r}
+series_mtas_temporadas = series_mtas_temporadas %>%
+    filter(as.numeric(season) %in% c(0:15))
+```
+
+```{r}
+series_mtas_temporadas %>%
+  ggplot(aes(x = as.numeric(season), y = UserRating)) + 
+  geom_point(alpha = .05, color = "red") +
+  geom_smooth(method="lm", se = T) +
+  labs(x = "Temporada", y = "Avaliação média no IMDB")
+```
+
+A linha azul representa a correlação entre à nota dada pelos usuários e as temporadas. Podemos observar que há uma fraca correlação descendente, caracterizada pelo valor:
+
+```{r}
+  cor(series_mtas_temporadas$UserRating,as.numeric(series_mtas_temporadas$season))
+```
+
+Então, embora realmente haja uma tendência das séries perderem sua qualidade no decorrer das temporadas isso não perece ser um fator determinante.
+
+
+#### Alguma série aumentou sua qualidade ao longo das temporadas?
+
+Já que a correlação geral é baixa, possivelmente alguma série ampliou sua qualidade ao longo do tempo. Iremos considerar aqui apenas as séries com pelo menos 12 temporadas. E ver qual possui a maior correlação ascendente entre o número da temporada e suas avaliações.
+
+```{r}
+series_doze_temporadas %>%
+  group_by(series_name) %>% 
+  summarise(cor = cor(UserRating, season)) %>% 
+  ggplot(aes(x = reorder(series_name,cor), y = cor, label = sprintf("%0.2f", round(cor, digits = 2)))) + 
+  geom_col() +
+  coord_flip() +
+  labs(x = "Série", y = "Correlação")
+```
+Entre as séries em nosso conjunto de dados que possuem pelo menos 12 temporadas, vemos que Two And a Half Men e The Simpsons claramente recebem notas cada vez mais baixas ao longo do tempo. Enquanto o reality show American Idol parece melhorar um pouco.
+
+
+### Existe relação entre as avaliações de uma série e o número de episódios por temporada da mesma?
+
+Com menos episódios por temporada, os realizadores das séries têm mais tempo para se dedicar a cada episódio individualmente. Vamos ver aqui se isso se reflete em avaliações positivas da audiência.
+
+```{r}
+episodes_per_season = episodes %>%
+  group_by(series_name) %>% 
+  summarise(media = mean(UserRating), ep_por_temporadas = mean(season_ep)) %>% 
+  filter(ep_por_temporadas >= 0 & ep_por_temporadas <= 20)
+```
+
+
+```{r}
+episodes_per_season %>%
+  ggplot(aes(x = ep_por_temporadas, y = media)) + 
+  geom_point(size = 0.8, alpha = .2, color = "red") +
+  geom_smooth(method="lm", se = T) +
+  labs(x = "Episódios por Temporada", y = "Avaliação média no IMDB")
+```
+A correlação entre número médio de episódios por temporadas e avaliação média é quase inexistente, sendo representada pelo valor:
+
+```{r}
+cor(episodes_per_season$media,episodes_per_season$ep_por_temporadas)
+```
+Com base nisto podemos dizer que a qualidade vista pelos espectadores não tem relação alguma com o numéro de episódios por temporada.

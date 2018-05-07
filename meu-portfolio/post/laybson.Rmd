@@ -1,0 +1,114 @@
+---
+title: "EDA IMDB SERIES LAYBSON"
+output:  
+  html_notebook:
+    toc: yes
+    toc_float: yes
+  html_document:
+    df_print: paged
+    toc: yes
+    toc_float: yes
+    
+data: 2018-05-06
+---
+
+```{r setup, echo=FALSE, warning=FALSE, message=FALSE}
+library(tidyverse)
+library(here)
+theme_set(theme_bw())
+```
+
+```{r}
+episodes = read_csv("data/series_from_imdb.csv") %>%
+    filter(series_name %in% c("Roma", "Vikings", "Band of Brothers"))
+```
+### Séries históricas
+
+Séries precisam contar histórias. E o percorrer das sociedades humanas nesse planetóide está recheado de histórias fantásticas, ávidas para serem contadas.
+
+As grandes produtoras estão aproveitando esse match, e produzindo muito conteúdo de qualidade com base nisso. A partir de dados advindos do IMDB, iremos analisar a visão do público sobre três ótimas série históricas:
+
+Band of Brothers - Produzida por Seven Spielberg e Tom Hanks, é uma das melhores retratações da Segunda Guerra Mundial já feitas. Conta a história da Easy Company, um pelotão de paraquedistas do exército americano, desde o seu treinamento até o dia D.
+
+Roma - Mostra a vida na Roma antiga, partindo da vitória de Julio Cesar nas camanhas gálicas em 52 a.C. Foi uma super produção da HBO. A série é excelente e historicamente precisa. Infelizmente só teve 2 temporadas por seu alto custo de produção.
+
+Vikings - Serie ainda em produção, que necessita de uma maior suspensão de descrença já que os resgistros históricos de seus personagens não são tão claros. É ambientada na era Viking no século IX, mostrando o estilo de vida e costumes nórdicos. A série é um sucesso de público.
+
+
+## Qual das séries é melhor avaliada?
+
+```{r}
+episodes %>%
+    group_by(series_name) %>% 
+    summarise(media = mean(UserRating)) %>% 
+    ggplot(aes(x = series_name, y = media, label = sprintf("%0.2f", round(media, digits = 2)))) + 
+    geom_col() +
+    geom_text(vjust=2, colour = "white") +
+    labs(x = "Séries", y = "Avaliação média no IMDB")
+```
+
+
+```{r}
+episodes %>%
+    ggplot(aes(x = series_name, y = UserRating)) + 
+    geom_boxplot(width = .3) +
+    geom_jitter(width = .1, size = 0.5, alpha = .5, color = "red") +
+    ylim(7, 10) + 
+    labs(x = "Séries", y = "Avaliação no IMDB")
+```
+
+Todas as séries são muito bem avaliadas. E sem muita diferença se comparamos as médias. Band of Brothers aparece um pouco a frente, seguido por Roma.
+
+Ao compararmos as distribuições no boxplot, vemos um padrão semelhante, com Vikings tendo um número maior de votações discordantes da média, o que pode apenas ser reflexo de seu maior número de episódios e temporadas.
+
+```{r}
+episodes %>%
+    group_by(series_name, season) %>% 
+    summarise(media = mean(UserRating)) %>% 
+    ggplot(aes(x = as.character(season), y = media, label = sprintf("%0.2f", round(media, digits = 2)))) + 
+    geom_col() +
+    geom_text(vjust=2, colour = "white", size = 3) +
+    facet_wrap(~ series_name) +
+    labs(x = "Temporadas", y = "Avaliação média no IMDB")
+```
+
+```{r}
+episodes %>%
+    ggplot(aes(x = as.character(season), y = UserRating)) + 
+    geom_boxplot() +
+    geom_jitter(width = .1, size = 0.5, alpha = .5, color = "red") +
+    facet_wrap(~ series_name) +
+    ylim(7, 10) + 
+    labs(x = "Temporada", y = "Avaliação no IMDB")
+```
+
+Visualizando os valores por temporada, vemos que a primeira temporada de Vikings teve uma média e distribuição em posição bem inferior às demais séries, o que impacta em sua nota geral. Um dado curioso é a baixíssima distribuição de notas na segunda temporada de Vikings. Parece que todas as pessoas concordaram que a série mereceu um 8.6.
+
+## Qual das séries é mais irregular?
+
+```{r}
+episodes %>% 
+  ggplot(aes(x = series_name, y = UserRating)) + 
+    geom_jitter(width = .3, size = 2, alpha = .3, color = "red") + 
+    labs(x = "Séries", y = "Avaliação no IMDB")
+```
+
+```{r}
+episodes %>%
+  ggplot(aes(UserRating, color=series_name)) +
+    geom_density() + 
+    labs(x = "Avaliação no IMDB", y = "Densidade")
+```
+
+Os gráficos mostram que, no geral, as notas de Vikings são bem mais irregulares que das demais, variando de 7.6 até 9.5, com uma concentração maior de notas em torno de 8.6. Não surpreende, já que Vikings tem um número maior de episódios, e as outras são produções mais robustas e com histórias fechadas.
+
+```{r}
+episodes %>%
+    ggplot(aes(x = as.character(season), y = UserRating)) +
+    geom_jitter(width = .2, size = 1.5, alpha = .3, color = "red") +
+    facet_wrap(~ series_name) +
+    ylim(7, 10) + 
+    labs(x = "Temporada", y = "Avaliação no IMDB")
+```
+
+Vendo por temporada, vemos que a 4ª temporada de Vikings é a mais irregular, variando de 8 à 9.5, enquanto a 2ª da mesma série é bastante regular. 
